@@ -16,5 +16,19 @@
                           inset 0px 1px 0px rgba(255, 255, 255, 0.02),
                           inset 0px 0px 0px 1px rgba(255, 255, 255, 0.02);
 
-  --opacity-2: 0.02;           
+  --opacity-2: 0.02;          
+  
+  --animate-border: border 2s linear infinite;
+}
+
+@property --border-angle {
+  syntax: "<angle>";
+  inherits: false;
+  initial-value: 0deg;
+}
+
+@keyframes border {
+  to {
+    --border-angle: 360deg;
+  }
 }

@@ -6,19 +6,22 @@ import { motion, useCycle } from "motion/react";
 import { UploadWidgetMinimizedButton } from "./upload-widget-minimized-button";
 
 export function UploadWidget() {
-const [isWidgetOpen, toggleWidgetOpen] = useCycle(false, true);
+  const [isWidgetOpen, toggleWidgetOpen] = useCycle(false, true);
+  const isThereAnyPendindUploads = true;
+
   return (
-    <Collapsible.Root onOpenChange={() => toggleWidgetOpen()}>
+    <Collapsible.Root onOpenChange={() => toggleWidgetOpen()} asChild>
       <motion.div
-        className="bg-zinc-900 overflow-hidden w-90 rounded-xl shadow-shape"
+        data-progress={isThereAnyPendindUploads ? "true" : "false"}
+        className="bg-zinc-900 overflow-hidden w-90 rounded-xl data-[state=open]:shadow-shape border border-transparent animate-border data-[state=closed]:rounded-3xl data-[state=closed]:data-[progress=false]:shadow-shape data-[state=closed]:data-[progress=true]:[background:linear-gradient(45deg,#09090B,--theme(--color-zinc-900)_50%,#09090B)_padding-box,conic-gradient(from_var(--border-angle),--theme(--color-zinc-700/.48)_80%,--theme(--color-indigo-500)_86%,--theme(--color-indigo-300)_90%,--theme(--color-indigo-500)_94%,--theme(--color-zinc-600/.48))_border-box]"
         animate={isWidgetOpen ? "open" : "closed"}
         variants={{
           closed: {
             width: "max-content",
             height: 44,
             transition: {
-              type: "spring", 
-              damping: 20,    
+              type: "spring",
+              damping: 20,
             },
           },
           open: {
@@ -27,7 +30,7 @@ const [isWidgetOpen, toggleWidgetOpen] = useCycle(false, true);
             transition: {
               type: "spring",
               mass: 1.5,
-              stiffness: 400, 
+              stiffness: 400,
               damping: 25,
             },
           },
