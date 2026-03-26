@@ -1,9 +1,12 @@
 import { useDropzone } from "react-dropzone";
 import CircularProgressBar from "./ui/circular-progress-bar";
 import { motion } from "motion/react";
+import { useUploads } from "../store/uploads";
 
 export function UploadWidgetDropzone() {
-  const isThereAnyPendindUpload = true;
+  const { addUploads } = useUploads();
+
+  const isThereAnyPendindUpload = false;
   const uploadGlobalPercentage = 68;
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
@@ -13,24 +16,24 @@ export function UploadWidgetDropzone() {
       "image/png": [],
     },
     onDrop(acceptedFiles) {
-      console.log(acceptedFiles);
+      addUploads(acceptedFiles);
     },
   });
 
   return (
     <motion.div
-          className="px-3 flex flex-col gap-3"
-          initial={{ opacity: 0 }}
-          animate={{
-            opacity: 1,
-          }}
-          transition={{ duration: 1.5 }}
-        >      
-          <div
-          data-active={isDragActive}
-          className="cursor-pointer text-zinc-400 bg-black/20 p-5 rounded-lg border border-zinc-700 border-dashed h-32 flex flex-col items-center justify-center gap-1 hover:border-zinc-600 transition-colors data-[active=true]:bg-indigo-500/10 data-[active=true]:border-indigo-500"
-          {...getRootProps()}
-        >
+      className="px-3 flex flex-col gap-3"
+      initial={{ opacity: 0 }}
+      animate={{
+        opacity: 1,
+      }}
+      transition={{ duration: 1.5 }}
+    >
+      <div
+        data-active={isDragActive}
+        className="cursor-pointer text-zinc-400 bg-black/20 p-5 rounded-lg border border-zinc-700 border-dashed h-32 flex flex-col items-center justify-center gap-1 hover:border-zinc-600 transition-colors data-[active=true]:bg-indigo-500/10 data-[active=true]:border-indigo-500"
+        {...getRootProps()}
+      >
         <input type="file" {...getInputProps()} />
 
         {isThereAnyPendindUpload ? (
