@@ -1,4 +1,6 @@
 import { create } from "zustand";
+import { enableMapSet } from "immer";
+import { immer } from "zustand/middleware/immer";
 
 export type Upload = {
   name: string;
@@ -10,27 +12,27 @@ type UploadState = {
   addUploads: (files: File[]) => void;
 };
 
-export const useUploads = create<UploadState>((set) => {
-  function addUploads(files: File[]) {
-    for (const file of files) {
-      const uploadId = crypto.randomUUID();
+enableMapSet();
 
-      const upload: Upload = {
-        name: file.name,
-        file,
-      };
+export const useUploads = create<UploadState, [["zustand/immer", never]]>(
+  immer((set) => {
+    function addUploads(files: File[]) {
+      for (const file of files) {
+        const uploadId = crypto.randomUUID();
 
-      set((state) => {
-        const uploads = new Map(state.uploads);
-        uploads.set(uploadId, upload);
+        const upload: Upload = {
+          name: file.name,
+          file,
+        };
 
-        return { uploads };
-      });
+        set((state) => {
+          state.uploads.set(uploadId, upload);
+        });
+      }
     }
-  }
-
-  return {
-    uploads: new Map(),
-    addUploads,
-  };
-});
+    return {
+      uploads: new Map(),
+      addUploads,
+    };
+  })
+);
