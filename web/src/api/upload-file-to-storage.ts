@@ -2,6 +2,7 @@ import axios from "axios"; // axios, because fetch doesn't have native progress 
 
 interface UploadFileToStorageParams {
   file: File;
+  onProgress: (sizeInBytes: number) => void;
 }
 
 interface uploadFileToStorageOpts {
@@ -9,7 +10,7 @@ interface uploadFileToStorageOpts {
 }
 
 export async function uploadFileToStorage(
-  { file }: UploadFileToStorageParams,
+  { file, onProgress }: UploadFileToStorageParams,
   opts?: uploadFileToStorageOpts
 ) {
   const data = new FormData();
@@ -25,6 +26,9 @@ export async function uploadFileToStorage(
       //   },
       // }
       signal: opts?.signal,
+      onUploadProgress(progressEvent) {
+        onProgress(progressEvent.loaded);
+      },
     }
   );
 
