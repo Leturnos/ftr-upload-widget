@@ -17,8 +17,9 @@ export function UploadWidgetUploadItem({
   upload,
   uploadId,
 }: UploadWidgetUploadItemProps) {
-  const cancelUpload = useUploads((store) => store.cancelUpload);
   const [copied, setCopied] = useState(false);
+  const retryUpload = useUploads((store) => store.retryUpload);
+  const cancelUpload = useUploads((store) => store.cancelUpload);
 
   const progress = Math.min(
     upload.compressedSizeInBytes
@@ -41,7 +42,7 @@ export function UploadWidgetUploadItem({
       <div className="flex flex-col gap-1">
         <span className="text-xs font-medium flex items-center gap-1">
           <ImageUp className="size-3 text-zinc-300" strokeWidth={1.5} />
-          <span>{upload.name}</span>
+          <span className="max-w-45 truncate">{upload.name}</span>
         </span>
 
         <span className="text-xxs text-zinc-400 flex gap-1.5 items-center">
@@ -116,13 +117,13 @@ export function UploadWidgetUploadItem({
           ) : (
             <Link2 className="size-4" strokeWidth={1.5} />
           )}
-
           <span className="sr-only">Copy remote URL</span>
         </Button>
 
         <Button
           disabled={!["canceled", "error"].includes(upload.status)}
           size="icon-sm"
+          onClick={() => retryUpload(uploadId)}
         >
           <RefreshCcw className="size-4" strokeWidth={1.5} />
           <span className="sr-only">Retry upload</span>
