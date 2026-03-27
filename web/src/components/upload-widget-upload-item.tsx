@@ -1,10 +1,11 @@
 import * as Progress from "@radix-ui/react-progress";
 
-import { Download, ImageUp, Link2, RefreshCcw, X } from "lucide-react";
+import { Check, Download, ImageUp, Link2, RefreshCcw, X } from "lucide-react";
 import { Button } from "./ui/button";
 import { motion } from "motion/react";
 import { type Upload, useUploads } from "../store/uploads";
 import { formatBytes } from "../utils/format-bytes";
+import { useState } from "react";
 
 interface UploadWidgetUploadItemProps {
   upload: Upload;
@@ -16,9 +17,14 @@ export function UploadWidgetUploadItem({
   uploadId,
 }: UploadWidgetUploadItemProps) {
   const cancelUpload = useUploads((store) => store.cancelUpload);
+  const [copied, setCopied] = useState(false);
 
   const progress = Math.min(
-    Math.round((upload.uploadSizeInBytes * 100) / upload.originalSizeInBytes),
+    upload.compressedSizeInBytes
+      ? Math.round(
+        (upload.uploadSizeInBytes * 100) / upload.compressedSizeInBytes
+      )
+      : 0,
     100
   );
 
@@ -59,7 +65,7 @@ export function UploadWidgetUploadItem({
       </div>
 
       <Progress.Root
-      value={progress}
+        value={progress}
         data-status={upload.status}
         className="bg-zinc-800 rounded-full h-1 overflow-hidden group"
       >
@@ -81,10 +87,22 @@ export function UploadWidgetUploadItem({
         </Button>
 
         <Button
-          disabled={upload.status !== "success"}
+          disabled={!upload.remoteUrl}
           size="icon-sm"
+          onClick={() => {
+            if (upload.remoteUrl) {
+              navigator.clipboard.writeText(upload.remoteUrl);
+              setCopied(true);
+              setTimeout(() => setCopied(false), 2000);
+            }
+          }}
         >
-          <Link2 className="size-4" strokeWidth={1.5} />
+          {copied ? (
+            <Check className="size-4" strokeWidth={2} />
+          ) : (
+            <Link2 className="size-4" strokeWidth={1.5} />
+          )}
+
           <span className="sr-only">Copy remote URL</span>
         </Button>
 

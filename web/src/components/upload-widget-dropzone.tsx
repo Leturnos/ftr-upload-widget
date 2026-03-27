@@ -13,6 +13,7 @@ export function UploadWidgetDropzone() {
     accept: {
       "image/jpeg": [],
       "image/png": [],
+      "image/webp": [],
     },
     onDrop(acceptedFiles) {
       addUploads(acceptedFiles);
@@ -55,9 +56,8 @@ export function UploadWidgetDropzone() {
       </div>
 
       <span className="text-xxs text-zinc-400">
-        Only PNG and JPG files are supported.
+        Only PNG, JPEG and WEBP files are supported.
       </span>
     </motion.div>
   );
 }
-
