@@ -6,6 +6,7 @@ import { motion } from "motion/react";
 import { type Upload, useUploads } from "../store/uploads";
 import { formatBytes } from "../utils/format-bytes";
 import { useState } from "react";
+import { downloadUrl } from "../utils/download-url";
 
 interface UploadWidgetUploadItemProps {
   upload: Upload;
@@ -48,10 +49,18 @@ export function UploadWidgetUploadItem({
             {formatBytes(upload.originalSizeInBytes)}
           </span>
           <div className="size-1 rounded-full bg-zinc-700" />
-          <span>
-            300KB
-            <span className="text-green-400 ml-1">-94%</span>
-          </span>
+          {formatBytes(upload.compressedSizeInBytes ?? 0)}
+          {upload.compressedSizeInBytes && (
+            <span className="text-green-400 ml-1">
+              -
+              {Math.round(
+                ((upload.originalSizeInBytes - upload.compressedSizeInBytes) *
+                  100) /
+                upload.originalSizeInBytes
+              )}
+              %
+            </span>
+          )}
           <div className="size-1 rounded-full bg-zinc-700" />
           {upload.status === "success" && <span>100%</span>}
           {upload.status === "progress" && <span>{progress}%</span>}
@@ -77,10 +86,15 @@ export function UploadWidgetUploadItem({
         />
       </Progress.Root>
 
-      <div className="absolute top-2.5 right-2.5 flex items-center gap-1">
+      <div className="absolute top-2 right-2 flex items-center gap-1">
         <Button
-          disabled={upload.status !== "success"}
+          aria-disabled={!upload.remoteUrl}
           size="icon-sm"
+          onClick={() => {
+            if (upload.remoteUrl) {
+              downloadUrl(upload.remoteUrl);
+            }
+          }}
         >
           <Download className="size-4" strokeWidth={1.5} />
           <span className="sr-only">Download compressed image</span>
